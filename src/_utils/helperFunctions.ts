@@ -1,4 +1,4 @@
-export { getRandomInt, autoIncNumber };
+export { getRandomInt };
 
 const getRandomInt = (min: number, max: number): number => {
 	min = Math.ceil(min);
@@ -6,7 +6,3 @@ const getRandomInt = (min: number, max: number): number => {
 	return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
 };
 
-let num = 0;
-const autoIncNumber = (): number => {
-	return ++num;
-};
