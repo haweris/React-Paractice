@@ -1,10 +1,11 @@
 import React from "react";
-import store from "./_store";
+import configureStore from "./_store/config";
 import { bugAdded, bugUpdated, bugRemoved } from "./_store/_bugs";
 import { getRandomInt } from "./_utils/helperFunctions";
 import "./App.css";
 
 function App() {
+  const store = configureStore();
 	const bugsList = store.getState() || [];
 	const randomBugIndex = (): number => getRandomInt(0, bugsList.length);
 
