@@ -1,12 +1,21 @@
 import React from "react";
-import configureStore from "./_store/config";
-import { bugAdded, bugUpdated, bugRemoved } from "./_store/_bugs";
-import { getRandomInt } from "./_utils/helperFunctions";
 import "./App.css";
 
+import configureStore from "./_store/config";
+import { bugAdded, bugUpdated, bugRemoved } from "./_store/_bugs";
+
+import { getRandomInt } from "./_utils/helperFunctions";
+import { Bug } from "./_utils/interfaces";
+
 function App() {
-  const store = configureStore();
-	const bugsList = store.getState() || [];
+	const store = configureStore();
+  const { getState } = store;
+
+	let bugsList = getState();
+	const unsubscribe = store.subscribe(() => {
+		bugsList = getState();
+  });
+
 	const randomBugIndex = (): number => getRandomInt(0, bugsList.length);
 
 	return (
@@ -15,7 +24,7 @@ function App() {
 				<button
 					type="button"
 					onClick={() => {
-						store.dispatch(bugAdded("Bug" + bugsList.length));
+						store.dispatch(bugAdded({ description: "Bug" + bugsList.length }));
 					}}
 				>
 					Add
@@ -23,9 +32,10 @@ function App() {
 				<button
 					type="button"
 					onClick={() => {
-						const randomBug = bugsList[randomBugIndex()];
+						const randomBug: Bug = bugsList[randomBugIndex()];
 						store.dispatch(
-							bugUpdated(randomBug, {
+							bugUpdated({
+								...randomBug,
 								description: `Bug${randomBugIndex()}`,
 							})
 						);
@@ -36,9 +46,10 @@ function App() {
 				<button
 					type="button"
 					onClick={() => {
-						const randomBug = bugsList[randomBugIndex()];
+						const randomBug: Bug = bugsList[randomBugIndex()];
 						store.dispatch(
-							bugUpdated(randomBug, {
+							bugUpdated({
+								...randomBug,
 								resolved: !randomBug.resolved,
 							})
 						);
@@ -49,8 +60,8 @@ function App() {
 				<button
 					type="button"
 					onClick={() => {
-						const randomBug = bugsList[randomBugIndex()];
-						store.dispatch(bugRemoved(randomBug?.id || 0));
+						const randomBug: Bug = bugsList[randomBugIndex()];
+						store.dispatch(bugRemoved({ id: randomBug?.id || 0 }));
 					}}
 				>
 					remove

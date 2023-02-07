@@ -4,9 +4,4 @@ interface Bug {
 	resolved?: boolean;
 }
 
-interface BugAction {
-  type: string;
-	payload: Bug;
-}
-
-export type { Bug, BugAction };
+export type { Bug };
