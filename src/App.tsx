@@ -9,14 +9,20 @@ import { Bug } from "./_utils/interfaces";
 
 function App() {
 	const store = configureStore();
-  const { getState } = store;
+	const { getState } = store;
 
 	let bugsList = getState();
+	const getBugsIntKeys = (): number[] =>
+		Object.keys(bugsList).map((key) => parseInt(key));
+
+	let bugIds = getBugsIntKeys();
+	const getRandomBugId = (): number => bugIds[getRandomInt(0, bugIds.length)];
+	const getRandomBug = (): Bug => bugsList[getRandomBugId()];
+
 	const unsubscribe = store.subscribe(() => {
 		bugsList = getState();
-  });
-
-	const randomBugIndex = (): number => getRandomInt(0, bugsList.length);
+		bugIds = getBugsIntKeys();
+	});
 
 	return (
 		<div className="App">
@@ -24,7 +30,7 @@ function App() {
 				<button
 					type="button"
 					onClick={() => {
-						store.dispatch(bugAdded({ description: "Bug" + bugsList.length }));
+						store.dispatch(bugAdded({ description: "Bug" + bugIds.length }));
 					}}
 				>
 					Add
@@ -32,11 +38,10 @@ function App() {
 				<button
 					type="button"
 					onClick={() => {
-						const randomBug: Bug = bugsList[randomBugIndex()];
 						store.dispatch(
 							bugUpdated({
-								...randomBug,
-								description: `Bug${randomBugIndex()}`,
+								...getRandomBug(),
+								description: `Bug${getRandomBugId()}`,
 							})
 						);
 					}}
@@ -46,7 +51,7 @@ function App() {
 				<button
 					type="button"
 					onClick={() => {
-						const randomBug: Bug = bugsList[randomBugIndex()];
+						const randomBug = getRandomBug();
 						store.dispatch(
 							bugUpdated({
 								...randomBug,
@@ -60,8 +65,7 @@ function App() {
 				<button
 					type="button"
 					onClick={() => {
-						const randomBug: Bug = bugsList[randomBugIndex()];
-						store.dispatch(bugRemoved({ id: randomBug?.id || 0 }));
+						store.dispatch(bugRemoved({ id: getRandomBug()?.id || 0 }));
 					}}
 				>
 					remove

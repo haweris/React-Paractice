@@ -1,33 +1,42 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Bug } from "../../_utils/interfaces";
+import { SliceData, Bug, BugMap } from "../../_utils/interfaces";
 import { autoIncNumber } from "../../_utils/helperFunctions";
 
 const count = autoIncNumber();
-
-// SLICES
-const slice = createSlice({
+const sliceInfo: SliceData<BugMap> = {
 	name: "bugs",
-	initialState: Array<Bug>,
+	initialState: {},
+};
+
+const slice = createSlice({
+	...sliceInfo,
 	reducers: {
 		bugAdded: (bugs, action) => {
-			bugs.push({
-				id: count.increment(),
+			const newId = count.increment();
+			bugs[newId] = {
+				id: newId,
 				description: action.payload.description,
 				resolved: false,
-			});
+			};
 		},
 		bugUpdated: (bugs, action) => {
-			const { id: updatedBugId, description, resolved }: Bug = action.payload;
-			const bugToUpdate = bugs.find(({ id }) => id === updatedBugId);
-			if (bugToUpdate) {
-				bugToUpdate.description = description;
-				bugToUpdate.resolved = resolved;
+			const { id, description, resolved }: Bug = action.payload;
+
+			if (id) {
+				const oldBug = bugs[id];
+				if (oldBug) {
+					bugs[id] = {
+						...oldBug,
+						description,
+						resolved,
+					};
+				}
 			}
 		},
 		bugRemoved: (bugs, action) => {
-			const { id: removedBugId } = action.payload;
-			const bugToRemove = bugs.find(({ id }) => id === removedBugId);
-			if (bugToRemove) bugs.splice(bugs.indexOf(bugToRemove), 1);
+			const { id } = action.payload;
+
+			delete bugs[id];
 		},
 	},
 });

@@ -1,32 +1,42 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Project } from "../../_utils/interfaces";
+import { SliceData, ProjectMap, Project } from "../../_utils/interfaces";
 import { autoIncNumber } from "../../_utils/helperFunctions";
 
 const count = autoIncNumber();
-// SLICES
-const slice = createSlice({
+const sliceInfo: SliceData<ProjectMap> = {
 	name: "projects",
-	initialState: Array<Project>,
+	initialState: {},
+};
+
+const slice = createSlice({
+	...sliceInfo,
 	reducers: {
 		ProjectAdded: (projects, action) => {
-			projects.push({
-				id: count.increment(),
+			const newId = count.increment();
+			projects[newId] = {
+				id: newId,
 				description: action.payload.description,
 				status: "pending",
-			});
+			};
 		},
 		ProjectUpdated: (projects, action) => {
-			const { id: updatedProjectId, description, status }: Project = action.payload;
-			const ProjectToUpdate = projects.find(({ id }) => id === updatedProjectId);
-			if (ProjectToUpdate) {
-				ProjectToUpdate.description = description;
-				ProjectToUpdate.status = status;
+			const { id, description, status }: Project = action.payload;
+
+			if (id) {
+				const oldProject = projects[id];
+				if (oldProject) {
+					projects[id] = {
+						...oldProject,
+						description,
+						status,
+					};
+				}
 			}
 		},
 		ProjectRemoved: (projects, action) => {
-			const { id: removedProjectId } = action.payload;
-			const ProjectToRemove = projects.find(({ id }) => id === removedProjectId);
-			if (ProjectToRemove) projects.splice(projects.indexOf(ProjectToRemove), 1);
+			const { id } = action.payload;
+
+			delete projects[id];
 		},
 	},
 });
