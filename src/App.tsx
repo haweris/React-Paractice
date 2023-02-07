@@ -35,8 +35,7 @@ function App() {
 				<button
 					type="button"
 					onClick={() => {
-            const randomBug = bugsList[randomBugIndex()];
-            debugger
+						const randomBug = bugsList[randomBugIndex()];
 						store.dispatch(
 							bugUpdated(randomBug, {
 								resolved: !randomBug.resolved,
