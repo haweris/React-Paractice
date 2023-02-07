@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Bug } from "../../_utils/interfaces";
+import { autoIncNumber } from "../../_utils/helperFunctions";
 
-let num = 0;
-const autoIncNumber = (): number => ++num;
+const count = autoIncNumber();
 
 // SLICES
 const slice = createSlice({
@@ -11,7 +11,7 @@ const slice = createSlice({
 	reducers: {
 		bugAdded: (bugs, action) => {
 			bugs.push({
-				id: autoIncNumber(),
+				id: count.increment(),
 				description: action.payload.description,
 				resolved: false,
 			});
