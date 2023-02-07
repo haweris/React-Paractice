@@ -32,7 +32,7 @@ export const bugRemoved = (id: number): BugAction => ({
 });
 
 // REDUCERS
-export const crudReducer = (
+const reducer = (
 	state: Array<Bug> = [],
 	action: {
 		type: string;
@@ -62,3 +62,5 @@ export const crudReducer = (
 	}
 	return state;
 };
+
+export default reducer;

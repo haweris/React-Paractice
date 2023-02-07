@@ -1,11 +1,11 @@
 import React from "react";
-import store, { actions } from "./_store";
+import store from "./_store";
+import { bugAdded, bugUpdated, bugRemoved } from "./_store/_bugs";
 import { getRandomInt } from "./_utils/helperFunctions";
 import "./App.css";
 
 function App() {
 	const bugsList = store.getState() || [];
-	const { bugAdded, bugUpdated, bugRemoved } = actions;
 	const randomBugIndex = (): number => getRandomInt(0, bugsList.length);
 
 	return (
