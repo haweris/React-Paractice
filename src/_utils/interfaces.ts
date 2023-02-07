@@ -1,7 +1,13 @@
 interface Bug {
-  id?: number;
+	id?: number;
 	description?: string;
 	resolved?: boolean;
 }
 
-export type { Bug };
+interface Project {
+	id?: number;
+	description?: string;
+	status?: "pending" | "started" | "completed" | "delivered" | "ended";
+}
+
+export type { Bug, Project };
