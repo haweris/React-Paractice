@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 
-import configureStore from "./_store/config";
+import configureStore from "./_store/_config";
 import { bugAdded, bugUpdated, bugRemoved } from "./_store/_bugs";
 
 import { getRandomInt } from "./_utils/helperFunctions";
@@ -11,16 +11,17 @@ function App() {
 	const store = configureStore();
 	const { getState } = store;
 
-	let bugsList = getState();
+	let { bugs } = getState().entities;
+
 	const getBugsIntKeys = (): number[] =>
-		Object.keys(bugsList).map((key) => parseInt(key));
+		Object.keys(bugs).map((key) => parseInt(key));
 
 	let bugIds = getBugsIntKeys();
 	const getRandomBugId = (): number => bugIds[getRandomInt(0, bugIds.length)];
-	const getRandomBug = (): Bug => bugsList[getRandomBugId()];
+	const getRandomBug = (): Bug => bugs[getRandomBugId()];
 
 	const unsubscribe = store.subscribe(() => {
-		bugsList = getState();
+		bugs = getState().entities.bugs;
 		bugIds = getBugsIntKeys();
 	});
 
@@ -47,20 +48,6 @@ function App() {
 					}}
 				>
 					Update Description
-				</button>
-				<button
-					type="button"
-					onClick={() => {
-						const randomBug = getRandomBug();
-						store.dispatch(
-							bugUpdated({
-								...randomBug,
-								resolved: !randomBug.resolved,
-							})
-						);
-					}}
-				>
-					Update Resolved
 				</button>
 				<button
 					type="button"

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { SliceData, Bug, BugMap } from "../../_utils/interfaces";
+import { SliceData, Bug, BugMap, ActionMap } from "../../_utils/interfaces";
 import { autoIncNumber } from "../../_utils/helperFunctions";
 
 const count = autoIncNumber();
@@ -11,32 +11,35 @@ const sliceInfo: SliceData<BugMap> = {
 const slice = createSlice({
 	...sliceInfo,
 	reducers: {
-		bugAdded: (bugs, action) => {
+		bugAdded: (bugs, action: ActionMap<Bug>) => {
 			const newId = count.increment();
+			const { priority, status } = action.payload;
+
 			bugs[newId] = {
 				id: newId,
-				description: action.payload.description,
-				resolved: false,
+				...action.payload,
+				priority: priority ?? "normal",
+				status: status ?? "pending",
 			};
 		},
-		bugUpdated: (bugs, action) => {
-			const { id, description, resolved }: Bug = action.payload;
+		bugUpdated: (bugs, action: ActionMap<Bug>) => {
+			const { id } = action.payload;
 
 			if (id) {
 				const oldBug = bugs[id];
+
 				if (oldBug) {
 					bugs[id] = {
 						...oldBug,
-						description,
-						resolved,
+						...action.payload,
 					};
 				}
 			}
 		},
-		bugRemoved: (bugs, action) => {
+		bugRemoved: (bugs, action: ActionMap<Bug>) => {
 			const { id } = action.payload;
 
-			delete bugs[id];
+			delete bugs[id ?? 0];
 		},
 	},
 });

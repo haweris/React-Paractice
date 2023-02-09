@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { SliceData, ProjectMap, Project } from "../../_utils/interfaces";
+import {
+	SliceData,
+	ActionMap,
+	Project,
+	ProjectMap,
+} from "../../_utils/interfaces";
 import { autoIncNumber } from "../../_utils/helperFunctions";
 
 const count = autoIncNumber();
@@ -11,35 +16,39 @@ const sliceInfo: SliceData<ProjectMap> = {
 const slice = createSlice({
 	...sliceInfo,
 	reducers: {
-		ProjectAdded: (projects, action) => {
+		projectAdded: (projects, action: ActionMap<Project>) => {
 			const newId = count.increment();
+			const { status, tagIds, bugIds } = action.payload;
+
 			projects[newId] = {
 				id: newId,
-				description: action.payload.description,
-				status: "pending",
+				...action.payload,
+				status: status ?? "pending",
+				tagIds: tagIds ?? [],
+				bugIds: bugIds ?? [],
 			};
 		},
-		ProjectUpdated: (projects, action) => {
-			const { id, description, status }: Project = action.payload;
+		projectUpdated: (projects, action: ActionMap<Project>) => {
+			const { id } = action.payload;
 
 			if (id) {
 				const oldProject = projects[id];
+
 				if (oldProject) {
 					projects[id] = {
 						...oldProject,
-						description,
-						status,
+						...action.payload,
 					};
 				}
 			}
 		},
-		ProjectRemoved: (projects, action) => {
+		projectRemoved: (projects, action: ActionMap<Project>) => {
 			const { id } = action.payload;
 
-			delete projects[id];
+			delete projects[id ?? 0];
 		},
 	},
 });
 
-export const { ProjectAdded, ProjectUpdated, ProjectRemoved } = slice.actions;
+export const { projectAdded, projectUpdated, projectRemoved } = slice.actions;
 export default slice.reducer;
